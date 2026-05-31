@@ -180,9 +180,15 @@ background-repeat: no-repeat;
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const utter = new SpeechSynthesisUtterance(text);
-        utter.lang = 'ru-RU';
-        utter.rate = 1;
-        utter.pitch = 1;
+utter.lang = 'ru-RU';
+utter.rate = 1;
+utter.pitch = 1;
+
+utter.onstart = () => avatarEl.classList.add('speaking');
+utter.onend = () => avatarEl.classList.remove('speaking');
+utter.onerror = () => avatarEl.classList.remove('speaking');
+
+        
         window.speechSynthesis.speak(utter);
       }
     }
