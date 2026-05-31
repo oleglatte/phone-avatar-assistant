@@ -1,195 +1,255 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Talking Avatar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#10131a" />
+  <title>Phone Avatar Assistant</title>
+  <link rel="manifest" href="manifest.json" />
   <style>
+    :root {
+      --bg: #0f1115;
+      --card: rgba(23,26,33,.92);
+      --text: #f5f7fb;
+      --muted: #aab2c0;
+      --accent: #6ea8fe;
+      --accent2: #8ef0c8;
+      --border: rgba(255,255,255,.08);
+      --soft: rgba(255,255,255,.04);
+    }
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 20px;
-      font-family: Arial, sans-serif;
-      color: #fff;
-      background: radial-gradient(circle at top, #1f2a44, #0d1321 65%);
+      min-height: 100dvh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top, #1b2131, #0f1115 50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
     }
     .app {
-      width: min(100%, 520px);
-      padding: 28px 22px;
-      border-radius: 24px;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
-      text-align: center;
-    }
-    
-    .avatar-wrap {
-  width: 150px;
-  height: 150px;
-  margin: 0 auto 18px;
-  transform: translateY(-20px);  /* поднимает аватар выше */
-}
-    .avatar {
-      width: 190px;
-      height: 190px;
-      border-radius: 50%;
-      object-fit: 190%;
-      border: 4px solid rgba(255,255,255,0.22);
-      box-shadow: 0 0 0 0 rgba(110,168,254,.18);
-      animation: idle 3.2s ease-in-out infinite;
-    }
-    .avatar-wrap.speaking { animation: speakFloat .42s ease-in-out infinite alternate; }
-    .avatar-wrap.listening { animation: listenPulse 1.1s ease-in-out infinite; }
-    .avatar-face {
-      position: absolut20%;
-      inset: 0;
-      pointer-events: none;
-    }
-    .eyes {
-      position: absolute;
-      top: 38%;
-      left: 50%;
-      width: 40%;
-      transform: translateX(-50%);
-      display: flex;
-      justify-content: space-between;
-    }
-    .eye {
-      width: 16px;
-      height: 10px;
-      border-top: 3px solid #1d2433;
-      border-radius: 50%;
-      animation: blink 5s infinite;
-    }
-    .eye.right { animation-delay: 0.15s; }
-    .mouth {
-      position: absolute;
-      left: 50%;
-      top: 62%;
-      width: 26px;
-      height: 12px;
-      transform: translateX(-50%);
-      border-bottom: 4px solid #1d2433;
-      border-radius: 0 0 30px 30px;
-      opacity: 0.85;
-    }
-    .avatar-wrap.speaking .mouth { animation: talkMouth .16s infinite alternate; }
-    .status {
-      margin-bottom: 14px;
-      font-size: 14px;
-      color: rgba(255,255,255,0.82);
-    }
-    textarea {
       width: 100%;
-      min-height: 120px;
-      border: none;
-      outline: none;
-      border-radius: 16px;
-      padding: 14px 16px;
-      font-size: 16px;
-      line-height: 1.45;
-      color: #111827;
-      background: #f8fbff;
-      margin-bottom: 14px;
+      max-width: 430px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 18px 48px rgba(0,0,0,.35);
+      backdrop-filter: blur(12px);
     }
-    .controls { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-    button {
-      border: none;
-      border-radius: 999px;
-      padding: 12px 18px;
+    .avatar {
+      width: 146px;
+      height: 146px;
+      margin: 6px auto 16px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+      animation: idle 3s ease-in-out infinite;
+      box-shadow: 0 0 0 0 rgba(110,168,254,.25);
+    }
+    .avatar::before {
+      content: "";
+      width: 124px;
+      height: 124px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 34%, #ffd8c2 0 27%, #f1bb9f 28% 43%, #293148 44% 100%);
+    }
+    .avatar.listening {
+      animation: pulse 1.1s ease-in-out infinite;
+    }
+    h1 {
+      margin: 0 0 8px;
+      text-align: center;
+      font-size: 28px;
+    }
+    .subtitle {
+      margin: 0;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.5;
       font-size: 15px;
+    }
+    .panel {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 16px;
+      background: var(--soft);
+      border: 1px solid var(--border);
+    }
+    .label {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 8px;
+    }
+    .value {
+      font-size: 15px;
+      line-height: 1.5;
+      min-height: 44px;
+    }
+    .status {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .controls {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 16px;
+      padding: 16px;
+      font-size: 16px;
       font-weight: 700;
-      cursor: pointer;
-      transition: transform .15s ease;
+      color: #08111f;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
     }
-    button:hover { transform: translateY(-1px); }
-    .speak-btn {
-      background: #6ea8fe;
-      color: #0d1321;
-      box-shadow: 0 10px 25px rgba(110,168,254,.35);
+    .secondary {
+      color: var(--text);
+      background: transparent;
+      border: 1px solid var(--border);
     }
-    .stop-btn {
-      background: rgba(255,255,255,0.14);
-      color: #fff;
+    .small {
+      margin-top: 14px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
     }
     @keyframes idle {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-4px); }
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
     }
-    @keyframes blink {
-      0%, 45%, 48%, 100% { transform: scaleY(1); opacity: .95; }
-      46%, 47% { transform: scaleY(0.15); opacity: .75; }
-    }
-    @keyframes talkMouth {
-      from { transform: translateX(-50%) scaleY(.82); }
-      to { transform: translateX(-50%) scaleY(1.22); }
-    }
-    @keyframes speakFloat {
-      from { transform: translateY(0); }
-      to { transform: translateY(-4px); }
-    }
-    @keyframes listenPulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.03); }
+    @keyframes pulse {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(110,168,254,.35); }
+      70% { transform: scale(1.02); box-shadow: 0 0 0 18px rgba(110,168,254,0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(110,168,254,0); }
     }
   </style>
 </head>
 <body>
   <main class="app">
-    <div class="avatar-wrap" id="avatarWrap">
-      <img class="avatar" src="Avatar.png" alt="Avatar" />
-      <div class="avatar-face">
-        <div class="eyes">
-          <span class="eye left"></span>
-          <span class="eye right"></span>
-        </div>
-        <div class="mouth"></div>
-      </div>
-    </div>
-    <div class="status" id="status">Готов говорить</div>
-    <textarea id="text">Привет. Я твой аватар. Напиши сюда текст, и я озвучу его.</textarea>
+    <div class="avatar" id="avatar" aria-hidden="true"></div>
+    <h1>Мой аватар-помощник</h1>
+    <p class="subtitle">Теперь это уже голосовой тестовый помощник: он слушает, показывает текст и отвечает голосом.</p>
+
+    <section class="panel">
+      <div class="label">Ты сказал</div>
+      <div class="value" id="heardText">Пока ничего не распознано.</div>
+    </section>
+
+    <section class="panel">
+      <div class="label">Ответ помощника</div>
+      <div class="value" id="replyText">Нажми кнопку ниже и скажи что-нибудь.</div>
+    </section>
+
+    <div class="status" id="status">Статус: готов к проверке микрофона.</div>
+
     <div class="controls">
-      <button class="speak-btn" id="speakBtn">Сказать</button>
-      <button class="stop-btn" id="stopBtn">Стоп</button>
+      <button id="listenBtn">Слушать меня</button>
+      <button class="secondary" id="testVoiceBtn">Проверить голос</button>
+      <button class="secondary" id="installBtn">Как установить на экран</button>
     </div>
+
+    <div class="small">Лучше всего пробовать в Chrome на Android. На некоторых устройствах распознавание речи в браузере может работать по-разному.</div>
   </main>
 
   <script>
-    const synth = window.speechSynthesis;
-    const avatarWrap = document.getElementById('avatarWrap');
-    const status = document.getElementById('status');
-    const text = document.getElementById('text');
-    const speakBtn = document.getElementById('speakBtn');
-    const stopBtn = document.getElementById('stopBtn');
+    const statusEl = document.getElementById('status');
+    const heardTextEl = document.getElementById('heardText');
+    const replyTextEl = document.getElementById('replyText');
+    const listenBtn = document.getElementById('listenBtn');
+    const testVoiceBtn = document.getElementById('testVoiceBtn');
+    const installBtn = document.getElementById('installBtn');
+    const avatarEl = document.getElementById('avatar');
 
-    function setStatus(mode, text) {
-      avatarWrap.classList.remove('speaking', 'listening');
-      if (mode) avatarWrap.classList.add(mode);
-      status.textContent = text;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    function speak(text) {
+      replyTextEl.textContent = text;
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'ru-RU';
+        utter.rate = 1;
+        utter.pitch = 1;
+        window.speechSynthesis.speak(utter);
+      }
     }
 
-    function speak() {
-      const value = text.value.trim();
-      if (!value) { setStatus('', 'Сначала введи текст'); return; }
-      if (!('speechSynthesis' in window)) { setStatus('', 'Браузер не поддерживает озвучку'); return; }
-      synth.cancel();
-      setStatus('listening', 'Готовлю озвучку...');
-      const utterance = new SpeechSynthesisUtterance(value);
-      utterance.lang = 'ru-RU';
-      utterance.rate = 1;
-      utterance.pitch = 1;
-      utterance.onstart = () => { setStatus('speaking', 'Говорю...'); };
-      utterance.onend = () => { setStatus('', 'Готов говорить'); };
-      utterance.onerror = () => { setStatus('', 'Ошибка озвучки'); };
-      synth.speak(utterance);
+    function buildReply(input) {
+      const text = input.toLowerCase();
+      if (text.includes('привет')) return 'Привет. Я тебя слышу и уже могу отвечать голосом.';
+      if (text.includes('как дела')) return 'У меня всё хорошо. Я готов продолжать сборку твоего помощника.';
+      if (text.includes('кто ты')) return 'Я твой тестовый мобильный аватар помощник.';
+      if (text.includes('спасибо')) return 'Пожалуйста. Идём дальше шаг за шагом.';
+      return 'Я услышал: ' + input + '. Это тестовая версия, но она уже умеет слушать и говорить.';
     }
 
-    speakBtn.addEventListener('click', speak);
-    stopBtn.addEventListener('click', () => { synth.cancel(); setStatus('', 'Готов говорить'); });
-    window.addEventListener('beforeunload', () => synth.cancel());
+    if (listenBtn) {
+      listenBtn.addEventListener('click', () => {
+        if (!SpeechRecognition) {
+          statusEl.textContent = 'Статус: распознавание речи не поддерживается в этом браузере.';
+          replyTextEl.textContent = 'Открой приложение в Chrome на Android или в совместимом браузере.';
+          return;
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'ru-RU';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        statusEl.textContent = 'Статус: слушаю тебя...';
+        heardTextEl.textContent = 'Слушаю...';
+        avatarEl.classList.add('listening');
+
+        recognition.onresult = (event) => {
+          const text = event.results[0][0].transcript;
+          heardTextEl.textContent = text;
+          statusEl.textContent = 'Статус: речь распознана.';
+          avatarEl.classList.remove('listening');
+          speak(buildReply(text));
+        };
+
+        recognition.onerror = (event) => {
+          avatarEl.classList.remove('listening');
+          statusEl.textContent = 'Статус: ошибка микрофона или распознавания: ' + event.error;
+          replyTextEl.textContent = 'Попробуй ещё раз и проверь разрешение на микрофон.';
+        };
+
+        recognition.onend = () => {
+          avatarEl.classList.remove('listening');
+          if (statusEl.textContent === 'Статус: слушаю тебя...') {
+            statusEl.textContent = 'Статус: запись остановлена.';
+          }
+        };
+
+        recognition.start();
+      });
+    }
+
+    testVoiceBtn.addEventListener('click', () => {
+      statusEl.textContent = 'Статус: проверяем воспроизведение голоса.';
+      speak('Привет. Теперь я не только говорю, но и умею слушать тебя в тестовом режиме.');
+    });
+
+    installBtn.addEventListener('click', () => {
+      statusEl.textContent = 'Статус: на iPhone — Поделиться и На экран Домой; на Android — меню Chrome и Install app или Add to Home screen.';
+    });
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
+    }
   </script>
 </body>
 </html>
