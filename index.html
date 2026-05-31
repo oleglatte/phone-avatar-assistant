@@ -55,12 +55,9 @@ background-repeat: no-repeat;
       animation: idle 3s ease-in-out infinite;
       box-shadow: 0 0 0 0 rgba(110,168,254,.25);
     }
-    .avatar::before {
-      content: "";
-      width: 124px;
-      height: 124px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 50% 34%, #ffd8c2 0 27%, #f1bb9f 28% 43%, #293148 44% 100%);
+  .avatar::before {
+      display: none;
+
     }
     .avatar.listening {
       animation: pulse 1.1s ease-in-out infinite;
